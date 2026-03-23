@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import AgencyDetailActions from "@/components/AgencyDetailActions";
 import SubscriptionControls from "@/components/SubscriptionControls";
+import MembersPanel, { type Member } from "@/components/MembersPanel";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -227,7 +228,7 @@ async function MembersSection({ agencyId }: { agencyId: string }) {
     }> | null;
   };
 
-  const members = await Promise.all(
+  const members: Member[] = await Promise.all(
     (profiles ?? []).map(async (profile) => {
       const { data: authData } =
         await adminClient.auth.admin.getUserById(profile.id);
@@ -241,68 +242,7 @@ async function MembersSection({ agencyId }: { agencyId: string }) {
     })
   );
 
-  return (
-    <div className="bg-surface border border-border rounded-xl overflow-hidden mb-6">
-      <div className="px-6 py-4 border-b border-border flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-text-primary">Membros</h2>
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-border/40 text-text-muted">
-          {members.length}
-        </span>
-      </div>
-
-      {members.length === 0 ? (
-        <div className="px-6 py-8 text-center">
-          <p className="text-text-muted text-sm">
-            Nenhum membro cadastrado nesta agência.
-          </p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left text-text-muted font-medium px-6 py-3">
-                  Nome
-                </th>
-                <th className="text-left text-text-muted font-medium px-6 py-3">
-                  E-mail
-                </th>
-                <th className="text-left text-text-muted font-medium px-6 py-3">
-                  Papel
-                </th>
-                <th className="text-left text-text-muted font-medium px-6 py-3 whitespace-nowrap">
-                  Membro desde
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {members.map((member) => (
-                <tr
-                  key={member.id}
-                  className="border-b border-border last:border-0 hover:bg-surface-2 transition-colors"
-                >
-                  <td className="px-6 py-4 font-medium text-text-primary">
-                    {member.full_name}
-                  </td>
-                  <td className="px-6 py-4 text-text-secondary">
-                    {member.email}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-brand/10 text-brand-light capitalize">
-                      {member.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-text-secondary whitespace-nowrap">
-                    {new Date(member.created_at).toLocaleDateString("pt-BR")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
+  return <MembersPanel agencyId={agencyId} initialMembers={members} />;
 }
 
 async function ActivityLogsSection({ agencyId }: { agencyId: string }) {
