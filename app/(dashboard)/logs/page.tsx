@@ -113,7 +113,7 @@ export default async function LogsPage({ searchParams }: Props) {
     id: string;
     name: string;
   }>;
-  const logs = (logsResult.data ?? []) as ActivityLog[];
+  const logs = (logsResult.data ?? []) as unknown as ActivityLog[];
   const totalCount = logsResult.count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const impLogs = (impResult.data ?? []) as ImpersonationLog[];
