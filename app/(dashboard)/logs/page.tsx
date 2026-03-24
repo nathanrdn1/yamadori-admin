@@ -18,10 +18,12 @@ interface Props {
 type ActivityLog = {
   id: string;
   action: string;
-  performed_by: string | null;
+  user_id: string | null;
   agency_id: string | null;
   metadata: Record<string, unknown> | null;
   created_at: string;
+  agencies: { id: string; name: string } | null;
+  profiles: { id: string; full_name: string | null } | null;
 };
 
 type ImpersonationLog = {
@@ -90,7 +92,9 @@ export default async function LogsPage({ searchParams }: Props) {
   let logsQuery = adminClient
     .from("activity_logs")
     .select(
-      "id, action, performed_by, agency_id, metadata, created_at",
+      `id, action, user_id, agency_id, metadata, created_at,
+       agencies (id, name),
+       profiles (id, full_name)`,
       { count: "exact" }
     )
     .gte("created_at", `${from}T00:00:00`)
@@ -204,9 +208,8 @@ export default async function LogsPage({ searchParams }: Props) {
               </thead>
               <tbody>
                 {logs.map((log) => {
-                  const agencyName = log.agency_id
-                    ? (agencyMap.get(log.agency_id) ?? shortId(log.agency_id))
-                    : "—";
+                  const agencyName = log.agencies?.name ?? "—";
+                  const userName = log.profiles?.full_name ?? "—";
                   const hasMetadata =
                     log.metadata &&
                     Object.keys(log.metadata).length > 0;
@@ -222,8 +225,8 @@ export default async function LogsPage({ searchParams }: Props) {
                       <td className="px-6 py-4 text-text-secondary text-xs">
                         {agencyName}
                       </td>
-                      <td className="px-6 py-4 font-mono text-text-muted text-xs">
-                        {shortId(log.performed_by)}
+                      <td className="px-6 py-4 text-text-secondary text-xs">
+                        {userName}
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md font-mono text-xs bg-surface-2 text-brand-light whitespace-nowrap">

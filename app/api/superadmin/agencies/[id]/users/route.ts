@@ -156,7 +156,7 @@ export async function POST(
   void adminClient.from("activity_logs").insert({
     agency_id: agencyId,
     action: "user_created_by_superadmin",
-    performed_by: superadminId,
+    user_id: superadminId,
     metadata: {
       email: email.trim().toLowerCase(),
       role,

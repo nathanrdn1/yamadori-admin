@@ -49,7 +49,7 @@ export async function PATCH(
   await adminClient.from("activity_logs").insert({
     agency_id: id,
     action: "plan_changed",
-    performed_by: superadminId,
+    user_id: superadminId,
     metadata: { plan_id: planId },
   });
 

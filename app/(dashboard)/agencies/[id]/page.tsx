@@ -250,14 +250,14 @@ async function ActivityLogsSection({ agencyId }: { agencyId: string }) {
 
   const { data: logs } = (await adminClient
     .from("activity_logs")
-    .select("id, action, performed_by, metadata, created_at")
+    .select("id, action, user_id, metadata, created_at")
     .eq("agency_id", agencyId)
     .order("created_at", { ascending: false })
     .limit(20)) as {
     data: Array<{
       id: string;
       action: string;
-      performed_by: string | null;
+      user_id: string | null;
       metadata: Record<string, unknown> | null;
       created_at: string;
     }> | null;

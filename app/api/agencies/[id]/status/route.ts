@@ -44,7 +44,7 @@ export async function PATCH(
   await adminClient.from("activity_logs").insert({
     agency_id: id,
     action: newIsActive ? "agency_activated" : "agency_deactivated",
-    performed_by: superadminId,
+    user_id: superadminId,
     metadata: { is_active: newIsActive },
   });
 

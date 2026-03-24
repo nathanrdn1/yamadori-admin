@@ -48,7 +48,7 @@ export async function PATCH(
   await adminClient.from("activity_logs").insert({
     agency_id: id,
     action: "subscription_status_forced",
-    performed_by: superadminId,
+    user_id: superadminId,
     metadata: { status },
   });
 
